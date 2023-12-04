@@ -14,7 +14,7 @@ type Board struct {
 }
 
 func main() {
-	fileName := "test.txt"
+	fileName := "input.txt"
 
 	board := new(Board)
 	var total int
@@ -24,12 +24,12 @@ func main() {
 		return
 	}
 	board.schema = strings.Split(string(file), "\n")
-	//for i, line := range board.schema {
-	// 	fmt.Println(i, line)
-	// }
+	for i, line := range board.schema {
+		fmt.Println(i, line)
+	}
 	board.length = len(board.schema[0]) - 1
 	board.height = len(board.schema)
-	//fmt.Println(board.length, board.height)
+	fmt.Println(board.length, board.height)
 	//fmt.Println(findSymbol(board, 6, 2))
 	for y := range board.schema {
 		for x := 0; x < board.length; x++ {
@@ -37,7 +37,7 @@ func main() {
 			x += jump
 			if found {
 				total += amount
-				fmt.Println(amount, x, y, total)
+				//fmt.Println(amount, x, y, total)
 			} else {
 				//total += amount
 			}
