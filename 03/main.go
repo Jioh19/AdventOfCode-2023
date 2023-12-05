@@ -34,14 +34,17 @@ func main() {
 	//fmt.Println(findSymbol(board, 6, 2))
 	for y := range board.schema {
 		for x := 0; x < board.length; x++ {
+			fmt.Println("Gear on: ", x, y)
+			if board.schema[y][x] == '*' {
+				gear(board, x, y)
+			}
 			found, amount, jump := findSymbol(board, x, y)
 			x += jump
 			if found {
 				total += amount
 				//fmt.Println(amount, x, y, total)
-			} else {
-				//total += amount
 			}
+
 		}
 	}
 	fmt.Println(total)
@@ -85,5 +88,37 @@ func findSymbol(board *Board, x int, y int) (bool, int, int) {
 }
 
 func gear(board *Board, x int, y int) (bool, int) {
+	var number [][2]int
+	_ = number
+
+	for i := -1; i < 2; i++ {
+		for j := -1; j < 2; j++ {
+			valid, value := checkGear(board, x+i, y+j)
+			_, _ = valid, value
+		}
+	}
 	return false, 0
+}
+
+func checkGear(board *Board, x int, y int) (bool, int) {
+	if x >= board.length || x < 0 || y >= board.height || y < 0 {
+		return false, 0
+	}
+	if strings.Contains("0123456789", string(board.schema[y][x])) {
+		value := checkNumber(board, x, y)
+		return true, value
+	}
+	return false, 0
+}
+
+func checkNumber(board *Board, x int, y int) int {
+	fmt.Println("chekcnumber: ", x, y, string(board.schema[y][x]))
+	posx := x
+	for posx >= 0 && strings.Contains("0123456789", string(board.schema[y][posx])) {
+		posx--
+
+	}
+	fmt.Println("posx: ", posx)
+
+	return posx
 }
