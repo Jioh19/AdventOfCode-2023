@@ -40,21 +40,38 @@ func main() {
 	location, index := insertChart(lines, index)
 	min := math.MaxInt
 	minSeed := 0
-	for _, seed := range seeds {
-		s := charting(soil, seed)
-		s = charting(fertilizer, s)
-		s = charting(water, s)
-		s = charting(light, s)
-		s = charting(temp, s)
-		s = charting(humidity, s)
-		s = charting(location, s)
-		if min > s {
-			minSeed = seed
-			min = s
+
+	for i := 0; i < len(seeds); i += 2 {
+		for j := 0; j <= seeds[i+1]; j++ {
+			s := charting(soil, seeds[i]+j)
+			s = charting(fertilizer, s)
+			s = charting(water, s)
+			s = charting(light, s)
+			s = charting(temp, s)
+			s = charting(humidity, s)
+			s = charting(location, s)
+			if min > s {
+				minSeed = seeds[i] + j
+				min = s
+				fmt.Println("Min changed", s, seeds[i]+j)
+			}
 		}
 	}
-	fmt.Println(min, minSeed)
-	_, _, _, _, _, _, _, _ = seeds, soil, fertilizer, water, light, temp, humidity, location
+
+	// for _, seed := range seeds {
+	// 	s := charting(soil, seed)
+	// 	s = charting(fertilizer, s)
+	// 	s = charting(water, s)
+	// 	s = charting(light, s)
+	// 	s = charting(temp, s)
+	// 	s = charting(humidity, s)
+	// 	s = charting(location, s)
+	// 	if min > s {
+	// 		minSeed = seed
+	// 		min = s
+	// 	}
+	// }
+	fmt.Println("min:", min, "Seed:", minSeed)
 }
 
 func insertSeeds(lines []string) []int {
@@ -71,7 +88,6 @@ func insertSeeds(lines []string) []int {
 
 func insertChart(lines []string, index int) (Chart, int) {
 	chart := new(Chart)
-	//fmt.Println(lines[index])
 	index++
 	for {
 		numbers := strings.Split(strings.TrimSpace(lines[index]), " ")
@@ -82,7 +98,6 @@ func insertChart(lines []string, index int) (Chart, int) {
 			val, _ := strconv.Atoi(numbers[i])
 			arr = append(arr, val)
 		}
-		//fmt.Println(arr)
 		scope.dest = arr[0]
 		scope.source = arr[1]
 		scope.span = arr[2]
@@ -100,12 +115,9 @@ func insertChart(lines []string, index int) (Chart, int) {
 func charting(chart Chart, seed int) int {
 	var result int = seed
 	for _, scope := range chart.scopes {
-		//	fmt.Println("Charting: ", seed)
-		if seed >= scope.source && seed <= scope.source+scope.span {
-			//fmt.Println(seed, scope.source, scope.span, scope.dest)
+		if seed >= scope.source && seed < scope.source+scope.span {
 			result = scope.dest + seed - scope.source
 		}
 	}
-	//fmt.Println(result)
 	return result
 }
