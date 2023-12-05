@@ -30,10 +30,10 @@ func main() {
 		var power float64
 		for _, win := range winnerSet {
 			for _, mySet := range myHand.hand[i] {
-				//fmt.Println(winnerSet, i, win, mySet)
 				if win == mySet {
 					aux = math.Pow(2, power)
 					power++
+					fmt.Println(winnerSet, i, aux)
 					//	fmt.Println("Plus 1")
 				}
 			}

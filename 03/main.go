@@ -14,7 +14,7 @@ type Board struct {
 }
 
 func main() {
-	fileName := "input.txt"
+	fileName := "test.txt"
 
 	board := new(Board)
 	var total int
@@ -25,9 +25,10 @@ func main() {
 	}
 	board.schema = strings.Split(string(file), "\n")
 	for i, line := range board.schema {
+		board.schema[i] = strings.TrimSpace((board.schema[i]))
 		fmt.Println(i, line)
 	}
-	board.length = len(board.schema[0]) - 1
+	board.length = len(board.schema[0])
 	board.height = len(board.schema)
 	fmt.Println(board.length, board.height)
 	//fmt.Println(findSymbol(board, 6, 2))
@@ -50,7 +51,7 @@ func checkSymbol(board *Board, x int, y int) bool {
 	if x >= board.length || x < 0 || y >= board.height || y < 0 {
 		return false
 	}
-	if !(board.schema[y][x] >= '0' && board.schema[y][x] <= '9') && board.schema[y][x] != '.' {
+	if strings.Contains("*#+$&-%=/@", string(board.schema[y][x])) {
 		return true
 	}
 	return false
@@ -81,4 +82,8 @@ func findSymbol(board *Board, x int, y int) (bool, int, int) {
 	found = found || checkSymbol(board, x, y+1)
 	amount, _ = strconv.Atoi(aux)
 	return found, amount, jump
+}
+
+func gear(board *Board, x int, y int) (bool, int) {
+	return false, 0
 }
