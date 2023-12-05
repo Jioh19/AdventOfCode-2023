@@ -24,7 +24,7 @@ func main() {
 	var count int
 
 	lines := strings.Split(string(file), "\n")
-	winner, myHand := insertHands(lines)
+	winner, myHand, winnings := insertHands(lines)
 
 	for i, winnerSet := range winner.hand {
 		var aux float64
@@ -39,16 +39,26 @@ func main() {
 				}
 			}
 		}
-		//fmt.Println(aux)
+		fmt.Println(power)
+		for w := 1; w < int(power)+1; w++ {
+			if w+i >= len(winnings) {
+				break
+			}
+			winnings[i+w] += winnings[i]
+		}
 		count += int(aux)
 	}
 	fmt.Println(count)
+	fmt.Println(winnings)
+	fmt.Println(countWinnings(winnings))
 }
 
-func insertHands(lines []string) (*Hands, *Hands) {
+func insertHands(lines []string) (*Hands, *Hands, []int) {
 	winner := new(Hands)
 	myHand := new(Hands)
+	var winnings []int
 	for i, line := range lines {
+		winnings = append(winnings, 1)
 		lines[i] = strings.Split(line, ":")[1]
 		lineWinner := strings.Split(lines[i], " | ")[0]
 		lineMyHand := strings.Split(lines[i], " | ")[1]
@@ -81,6 +91,14 @@ func insertHands(lines []string) (*Hands, *Hands) {
 		//	fmt.Println(arrIntW)
 	}
 	//fmt.Println(winner.hand[1])
-	fmt.Println(myHand.hand[1])
-	return winner, myHand
+	fmt.Println(winnings)
+	return winner, myHand, winnings
+}
+
+func countWinnings(winnings []int) int {
+	var counter int
+	for _, value := range winnings {
+		counter += value
+	}
+	return counter
 }
