@@ -35,8 +35,6 @@ func insertData(file []byte) [][]int {
 }
 
 func solutions(times []int, distances []int) {
-	fmt.Println("times", times)
-	fmt.Println("distances", distances)
 	result := 1
 	for i, time := range times {
 		counter := 0
