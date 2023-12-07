@@ -9,9 +9,9 @@ import (
 )
 
 type Game struct {
-	hand string
-	bet  int
-	//	high  int
+	hand  string
+	bet   int
+	high  []int
 	value int
 }
 
@@ -22,12 +22,24 @@ func (a ByValue) Len() int           { return len(a) }
 func (a ByValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByValue) Less(i, j int) bool { return a[i].value < a[j].value }
 
-// ByHand is a type for sorting Game slice by Hand.
-type ByHand []Game
+// ByHigh is a type for sorting Game slice by High cards.
+type ByHigh []Game
 
-func (a ByHand) Len() int           { return len(a) }
-func (a ByHand) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByHand) Less(i, j int) bool { return a[i].hand < a[j].hand }
+func (a ByHigh) Len() int { return len(a) }
+func (a ByHigh) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func (a ByHigh) Less(i, j int) bool {
+	// Compare each element of the high slices
+	for k := 0; k < len(a[i].high) && k < len(a[j].high); k++ {
+		if a[i].high[k] != a[j].high[k] {
+			return a[i].high[k] < a[j].high[k]
+		}
+	}
+	// If high slices are equal up to the length of the smaller slice, compare lengths
+	return len(a[i].high) < len(a[j].high)
+}
 
 // MultiSorter is a type that composes multiple sort.Interface implementations.
 type MultiSorter struct {
@@ -73,8 +85,8 @@ func main() {
 		return
 	}
 	result := insertData(file)
-	_ = result
 	fmt.Println(result)
+	fmt.Println(betTotal(result))
 }
 
 func insertData(file []byte) []Game {
@@ -84,22 +96,44 @@ func insertData(file []byte) []Game {
 		numbers := strings.Fields(line)
 		hand := numbers[0]
 		bet, err := strconv.Atoi(numbers[1])
-		//		high := getHighCard(hand)
+		high := getHigh(hand)
 		value := getValue(hand)
 		if err != nil {
 			continue
 		}
-		game := Game{hand, bet, value}
+		game := Game{hand, bet, high, value}
 		games = append(games, game)
 	}
+
 	multiSorter := NewMultiSorter(
 		games,
 		ByValue(games),
-		ByHand(games),
+		ByHigh(games),
 	)
 	sort.Sort(multiSorter)
-	//games = sorter(games)
 	return games
+}
+
+func getHigh(hand string) []int {
+	var result []int
+	for _, c := range hand {
+		switch {
+		case c < ':':
+			num, _ := strconv.Atoi(string(c))
+			result = append(result, num)
+		case c == 'T':
+			result = append(result, 10)
+		case c == 'J':
+			result = append(result, 11)
+		case c == 'Q':
+			result = append(result, 12)
+		case c == 'K':
+			result = append(result, 13)
+		case c == 'A':
+			result = append(result, 14)
+		}
+	}
+	return result
 }
 
 func getValue(hand string) int {
@@ -132,9 +166,10 @@ func getValue(hand string) int {
 	}
 }
 
-// func sorter(games []Game) []Game {
-// 	sort.SliceStable(games, func(i, j int) bool {
-// 		return games[i].value > games[j].value
-// 	})
-// 	return games
-// }
+func betTotal(games []Game) int {
+	result := 0
+	for i, game := range games {
+		result += (i + 1) * game.bet
+	}
+	return result
+}
