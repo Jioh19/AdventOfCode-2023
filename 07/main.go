@@ -85,7 +85,10 @@ func main() {
 		return
 	}
 	result := insertData(file)
-	fmt.Println(result)
+	for _, res := range result {
+		fmt.Println(res)
+	}
+	//fmt.Println(result)
 	fmt.Println(betTotal(result))
 }
 
@@ -124,7 +127,7 @@ func getHigh(hand string) []int {
 		case c == 'T':
 			result = append(result, 10)
 		case c == 'J':
-			result = append(result, 11)
+			result = append(result, 1)
 		case c == 'Q':
 			result = append(result, 12)
 		case c == 'K':
@@ -140,11 +143,19 @@ func getValue(hand string) int {
 	first := 0
 	second := 0
 	hands := hand
+	joker := strings.Count(hands, string('J'))
 	for len(hands) > 0 {
-		if count := strings.Count(hands, string(hands[0])); count > first {
-			first, second = count, first
-		} else if count > second {
-			second = count
+		count := strings.Count(hands, string(hands[0]))
+		if hands[0] != 'J' {
+			count += joker
+			fmt.Println("getvalue:", count, joker, string(hands[0]))
+			fmt.Println(hands)
+		}
+
+		if count >= first {
+			first, second = count, first-joker
+		} else if count-joker > second {
+			second = count - joker
 		}
 		hands = strings.Replace(hands, string(hands[0]), "", 5)
 	}
