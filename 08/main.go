@@ -61,5 +61,5 @@ func navigate(movement string, m map[string]Node) int {
 		}
 		result++
 	}
-	return result - 1
+	return result
 }
