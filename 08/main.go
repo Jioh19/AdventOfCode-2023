@@ -12,7 +12,7 @@ type Node struct {
 }
 
 func main() {
-	fileName := "test.txt"
+	fileName := "input.txt"
 	file, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -20,8 +20,8 @@ func main() {
 	}
 	m := make(map[string]Node)
 	movement := insertData(file, m)
-	fmt.Println(movement)
-	fmt.Println(m)
+	// fmt.Println(movement)
+	// fmt.Println(m)
 	fmt.Println(navigate(movement, m))
 }
 
@@ -45,5 +45,21 @@ func insertData(file []byte, m map[string]Node) string {
 }
 
 func navigate(movement string, m map[string]Node) int {
-	return 0
+	result := 0
+	i := 0
+	key := "AAA"
+	for key != "ZZZ" {
+		if movement[i] == 'L' {
+			key = m[key].left
+		}
+		if movement[i] == 'R' {
+			key = m[key].right
+		}
+		i++
+		if i == len(movement) {
+			i = 0
+		}
+		result++
+	}
+	return result - 1
 }
