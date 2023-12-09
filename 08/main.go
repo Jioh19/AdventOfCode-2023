@@ -42,9 +42,6 @@ func main() {
 	}
 	m := make(map[string]Node)
 	movement := insertData(file, m)
-	// fmt.Println(movement)
-	// fmt.Println(m)
-	//fmt.Println(navigate(movement, m))
 	part2 := navigate2(movement, m, selectStart(m))
 	fmt.Println("Resultado de la parte 2:", lcmOfSlice(part2))
 }
@@ -58,7 +55,6 @@ func insertData(file []byte, m map[string]Node) string {
 		left := strings.Trim(strings.TrimSpace(strings.Split(data, ",")[0]), "(")
 		right := strings.Trim(strings.Split(data, ",")[1], ")")
 		right = strings.TrimSpace(right)
-		//fmt.Println(left, key, right)
 		node := new(Node)
 		node.left = left
 		node.right = right
@@ -95,7 +91,6 @@ func selectStart(m map[string]Node) []string {
 			mA = append(mA, k)
 		}
 	}
-	//fmt.Println("String:", mA)
 	return mA
 }
 
@@ -132,45 +127,4 @@ func navigate2(movement string, m map[string]Node, start []string) []int {
 	}
 	fmt.Println(arr)
 	return arr
-
-	// var arr []int
-	// var status []string = start
-	// for j := 0; j < len(start); j++ {
-	// 	var i = 0
-	// 	result := 0
-	// 	fmt.Println(len(arr), len(start))
-	// 	for status[j][2] != 'Z' {
-	// 		dir := movement[i]
-	// 		result++
-	// 		if dir == 'L' {
-	// 			status[j] = m[status[j]].left
-	// 		}
-	// 		if dir == 'R' {
-	// 			status[j] = m[status[j]].right
-	// 		}
-	// 		//fmt.Println(string(dir), string(status[j]), j, len(movement), movement)
-	// 		i++
-	// 		if i >= len(movement)-1 {
-	// 			i = 0
-	// 		}
-	// 	}
-	// 	arr = append(arr, result)
-	// 	fmt.Println(arr)
-	// }
-
 }
-
-// for key[2] != 'Z' {
-// 	if movement[i] == 'L' {
-// 		key = m[key].left
-// 	}
-// 	if movement[i] == 'R' {
-// 		key = m[key].right
-// 	}
-// 	i++
-// 	if i == len(movement) {
-// 		i = 0
-// 	}
-// 	result++
-// }
-// arr = append(arr, result)
