@@ -11,6 +11,28 @@ type Node struct {
 	left  string
 }
 
+// Calculate the greatest common divisor (GCD) using the Euclidean algorithm
+func gcd(a, b int) int {
+	for b != 0 {
+		a, b = b, a%b
+	}
+	return a
+}
+
+// Calculate the least common multiple (LCM) of two integers
+func lcm(a, b int) int {
+	return (a * b) / gcd(a, b)
+}
+
+// Calculate the LCM of a slice of integers
+func lcmOfSlice(numbers []int) int {
+	result := 1
+	for _, num := range numbers {
+		result = lcm(result, num)
+	}
+	return result
+}
+
 func main() {
 	fileName := "input.txt"
 	file, err := os.ReadFile(fileName)
@@ -22,7 +44,9 @@ func main() {
 	movement := insertData(file, m)
 	// fmt.Println(movement)
 	// fmt.Println(m)
-	fmt.Println(navigate(movement, m))
+	//fmt.Println(navigate(movement, m))
+	part2 := navigate2(movement, m, selectStart(m))
+	fmt.Println("Resultado de la parte 2:", lcmOfSlice(part2))
 }
 
 func insertData(file []byte, m map[string]Node) string {
@@ -63,3 +87,90 @@ func navigate(movement string, m map[string]Node) int {
 	}
 	return result
 }
+
+func selectStart(m map[string]Node) []string {
+	var mA []string
+	for k := range m {
+		if k[2] == 'A' {
+			mA = append(mA, k)
+		}
+	}
+	//fmt.Println("String:", mA)
+	return mA
+}
+
+func checkStatus(status []string) bool {
+	for _, stat := range status {
+		if stat[2] != 'Z' {
+			return false
+		}
+	}
+	return true
+}
+
+func navigate2(movement string, m map[string]Node, start []string) []int {
+	status := start
+	var arr []int
+
+	for j := 0; j < len(start); j++ {
+		result := 0
+		i := 0
+		for status[j][2] != 'Z' {
+			if movement[i] == 'L' {
+				status[j] = m[status[j]].left
+			}
+			if movement[i] == 'R' {
+				status[j] = m[status[j]].right
+			}
+			i++
+			if i == len(movement) {
+				i = 0
+			}
+			result++
+		}
+		arr = append(arr, result)
+	}
+	fmt.Println(arr)
+	return arr
+
+	// var arr []int
+	// var status []string = start
+	// for j := 0; j < len(start); j++ {
+	// 	var i = 0
+	// 	result := 0
+	// 	fmt.Println(len(arr), len(start))
+	// 	for status[j][2] != 'Z' {
+	// 		dir := movement[i]
+	// 		result++
+	// 		if dir == 'L' {
+	// 			status[j] = m[status[j]].left
+	// 		}
+	// 		if dir == 'R' {
+	// 			status[j] = m[status[j]].right
+	// 		}
+	// 		//fmt.Println(string(dir), string(status[j]), j, len(movement), movement)
+	// 		i++
+	// 		if i >= len(movement)-1 {
+	// 			i = 0
+	// 		}
+	// 	}
+	// 	arr = append(arr, result)
+	// 	fmt.Println(arr)
+	// }
+
+}
+
+// for key[2] != 'Z' {
+// 	if movement[i] == 'L' {
+// 		key = m[key].left
+// 	}
+// 	if movement[i] == 'R' {
+// 		key = m[key].right
+// 	}
+// 	i++
+// 	if i == len(movement) {
+// 		i = 0
+// 	}
+// 	result++
+// }
+// arr = append(arr, result)
