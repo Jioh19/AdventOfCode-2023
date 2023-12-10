@@ -38,7 +38,7 @@ func shoeLaceFormula(grid []string, start Point, route []Point) any {
 	for i := 0; i < len(route); i++ {
 		cur := route[i]
 		next := route[(i+1)%len(route)]
-
+		//Al fin me sirvió algebra lineal, producto cruz....
 		polygonArea += cur.x*next.y - cur.y*next.x
 	}
 
@@ -71,7 +71,6 @@ func navigate(grid []string, start Point) (int, []Point) {
 		next = next[1:]
 	}
 	result = (result + 1) / 2
-	//fmt.Println(visited)
 	return result, route
 }
 
