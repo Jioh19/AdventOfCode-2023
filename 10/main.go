@@ -26,10 +26,10 @@ func main() {
 	s := time.Now()
 	result1, route := navigate(grid, start)
 	fmt.Println("Part 1:", result1)
-	//fmt.Println(route)
+	//fmt.Printf("%v \n", route)
 	result2 := shoeLaceFormula(grid, start, route)
 	fmt.Println("Part 2:", result2)
-	fmt.Println("Time in nanoseconds:", time.Since(s).Nanoseconds())
+	fmt.Println("Time in milliseconds:", time.Since(s).Milliseconds())
 }
 
 func shoeLaceFormula(grid []string, start Point, route []Point) any {
@@ -47,7 +47,6 @@ func shoeLaceFormula(grid []string, start Point, route []Point) any {
 	}
 	polygonArea /= 2
 
-	// https://en.wikipedia.org/wiki/Pick%27s_theorem
 	return polygonArea - len(route)/2 + 1
 }
 
