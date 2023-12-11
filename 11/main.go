@@ -35,7 +35,7 @@ func main() {
 	// }
 	// fmt.Println(galaxies)
 	fmt.Println("Part 1:", part1)
-	fmt.Println(expY, expX)
+	//fmt.Println(expY, expX)
 	fmt.Println("Time in nanoseconds:", time.Since(s).Nanoseconds())
 	s2 := time.Now()
 	part2 := getAllDiscantes2(galaxies2, expY, expX)
@@ -99,7 +99,7 @@ func findGalaxies(grid []string) []Point {
 			}
 		}
 	}
-	fmt.Println(galaxies)
+	//fmt.Println(galaxies)
 	return galaxies
 }
 
