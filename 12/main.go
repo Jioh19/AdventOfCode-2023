@@ -84,7 +84,7 @@ func getArrangements(springs []string, broken [][]int) int {
 	result := 0
 	for i, spring := range springs {
 		result += countArrangement(spring, broken[i])
-		fmt.Println("Cycle:", i)
+		//fmt.Println("Cycle:", i)
 	}
 	return result
 }
@@ -93,7 +93,7 @@ func getArrangements2(springs []string, broken [][]int) int {
 	result := 0
 	for i, spring := range springs {
 		result += getCache(spring, broken[i])
-		fmt.Println("Cycle:", i)
+		//fmt.Println("Cycle:", i)
 	}
 	return result
 }
@@ -155,7 +155,7 @@ func countArrangementCache(i, j int, spring string, broke []int, cache [][]int) 
 		res = countArrangementCache(i+1, j, spring, broke, cache)
 	} else {
 		if spring[i] == '?' {
-			res += countArrangementCache(i+1, j, spring, broke, cache)
+			res = countArrangementCache(i+1, j, spring, broke, cache)
 		}
 		if j < len(broke) {
 			count := 0
@@ -177,6 +177,7 @@ func countArrangementCache(i, j int, spring string, broke []int, cache [][]int) 
 	cache[i][j] = res
 	if res < 0 {
 		fmt.Println("i, j", cache[i][j])
+		return 0
 	}
 	return res
 
