@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	fileName := "input.txt"
+	fileName := "test.txt"
 	file, err := os.ReadFile(fileName)
 	if err != nil {
 		fmt.Println(err)
@@ -27,14 +27,14 @@ func main() {
 	fmt.Println("Result:", result)
 	fmt.Println("Time in nanoseconds:", time.Since(s).Nanoseconds())
 	s2 := time.Now()
-	springs2, broken2 := insertData2(file)
+	//springs2, broken2 := insertData2(file)
 	// for _, row := range springs2 {
 	// 	fmt.Println(row)
 	// }
 	// for _, row := range broken2 {
 	// 	fmt.Println(row)
 	// }
-	result2 := getArrangements2(springs2, broken2)
+	result2 := getArrangements2(springs, broken)
 	fmt.Println("Result 2:", result2)
 	fmt.Println("Time in nanoseconds:", time.Since(s2).Nanoseconds())
 }
@@ -92,21 +92,11 @@ func getArrangements(springs []string, broken [][]int) int {
 func getArrangements2(springs []string, broken [][]int) int {
 	result := 0
 	for i, spring := range springs {
-		result += getCache(spring, broken[i])
+		cache := map[string]int{}
+		result += countArrangementCache(spring, broken[i], cache)
 		//fmt.Println("Cycle:", i)
 	}
 	return result
-}
-
-func getCache(spring string, broke []int) int {
-	var cache [][]int
-	for i := 0; i < len(spring); i++ {
-		cache = append(cache, make([]int, len(spring)+1))
-		for j := 0; j < len(spring)+1; j++ {
-			cache[i][j] = -1
-		}
-	}
-	return countArrangementCache(0, 0, spring, broke, cache)
 }
 
 func countArrangement(spring string, broke []int) int {
@@ -138,47 +128,46 @@ func countArrangement(spring string, broke []int) int {
 	return result
 }
 
-func countArrangementCache(i, j int, spring string, broke []int, cache [][]int) int {
-	if i >= len(spring) {
-		if j < len(broke) {
+func countArrangementCache(spring string, broke []int, cache map[string]int) int {
+	key := spring + fmt.Sprintf("%v", broke)
+	if n, ok := cache[key]; ok {
+		//fmt.Println(key, n)
+		return n
+	}
+	cache[key] = 0
+	if spring == "" {
+		if len(broke) == 0 {
+			return 1
+		}
+		return 0
+	}
+	if len(broke) == 0 {
+		if strings.Contains(spring, "#") {
 			return 0
 		}
 		return 1
 	}
-
-	if cache[i][j] != -1 {
-		return cache[i][j]
+	result := 0
+	if spring[0] == '.' || spring[0] == '?' {
+		n := countArrangementCache(spring[1:], broke, cache)
+		cache[key] = n
+		//fmt.Println(key, n)
+		result += n
 	}
-
-	res := 0
-	if spring[i] == '.' {
-		res = countArrangementCache(i+1, j, spring, broke, cache)
-	} else {
-		if spring[i] == '?' {
-			res = countArrangementCache(i+1, j, spring, broke, cache)
-		}
-		if j < len(broke) {
-			count := 0
-			for k := i; k < len(spring); k++ {
-				if count > broke[j] || spring[k] == '.' || count == broke[j] && spring[k] == '?' {
-					break
-				}
-				count += 1
-			}
-			if count == broke[j] {
-				if i+count < len(spring) && spring[i+count] != '#' {
-					res += countArrangementCache(i+count, j+1, spring, broke, cache)
-				} else {
-					res += countArrangementCache(i+count, j+1, spring, broke, cache)
-				}
+	if spring[0] == '#' || spring[0] == '?' {
+		if broke[0] <= len(spring) && !strings.Contains(spring[:broke[0]], ".") && (broke[0] == len(spring) || spring[broke[0]] != '#') {
+			if broke[0] == len(spring) {
+				n := countArrangementCache("", broke[1:], cache)
+				cache[key] = n
+				//fmt.Println(key, n)
+				result += n
+			} else {
+				n := countArrangementCache(spring[broke[0]+1:], broke[1:], cache)
+				cache[key] = n
+				//fmt.Println(key, n)
+				result += n
 			}
 		}
 	}
-	cache[i][j] = res
-	if res < 0 {
-		fmt.Println("i, j", cache[i][j])
-		return 0
-	}
-	return res
-
+	return result
 }
