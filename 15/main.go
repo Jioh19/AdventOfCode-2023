@@ -61,7 +61,6 @@ func sum(inputs [][]byte) int {
 	result := 0
 	for _, input := range inputs {
 		val := hash(input)
-		//fmt.Println(i, val)
 		result += val
 	}
 	return result
@@ -71,17 +70,15 @@ func sum2(inputs [][]byte) int {
 	result := 0
 	m := make(map[int][]Lens)
 NEXT:
-	for k, input := range inputs {
+	for _, input := range inputs {
 		if len(input) > 0 {
 			arrInput := strings.Split(string(input), "=")
 			if len(arrInput) == 2 {
 				split := arrInput[0]
 
 				focus := arrInput[1]
-				com := "="
 				lens, _ := strconv.Atoi(string(focus))
 				val := hash([]byte(split))
-				fmt.Println(k, val, split, com)
 				for i, len := range m[val] {
 					if split == len.name {
 						m[val][i].focus = lens
@@ -92,30 +89,14 @@ NEXT:
 			} else {
 				split := strings.Split(string(input), "-")[0]
 				val := hash([]byte(split))
-				//fmt.Println(val, m[val], string(split))
 				for i, len := range m[val] {
 					if split == len.name {
-						//fmt.Println("Found!")
 						m[val] = append(m[val][:i], m[val][i+1:]...)
-						// if len(m[val])-1 == i {
-						// 	m[val] = m[val][:i]
-						// } else {
-						// 	m[val] = append(m[val][:i], m[val][i+1])
-
-						//}
 					}
 				}
-
 			}
-			//fmt.Println(string(split), val, string(com), int(lens))
-
 		}
 	}
-
-	// for _, box := range m {
-	// 	fmt.Println(box)
-
-	// }
 	result = calc(m)
 	return result
 }
@@ -125,7 +106,6 @@ func calc(m map[int][]Lens) int {
 	for i, box := range m {
 		for j, lens := range box {
 			result += (i + 1) * (j + 1) * lens.focus
-			// 	//fmt.Println(i+1, j+1, lens.focus)
 		}
 	}
 	return result
