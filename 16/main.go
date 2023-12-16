@@ -34,6 +34,10 @@ func main() {
 	part1 := count(part1(grid))
 	fmt.Println(part1)
 	fmt.Println("Time in nanoseconds:", time.Since(s).Nanoseconds())
+	s2 := time.Now()
+	part2 := part2(grid)
+	fmt.Println(part2)
+	fmt.Println("Time in nanoseconds:", time.Since(s2).Nanoseconds())
 }
 
 func insertData(file []byte) [][]byte {
@@ -64,11 +68,77 @@ func part1(grid [][]byte) [][]byte {
 	m := make(map[PointDir]bool)
 
 	energize(grid, energized, 0, -1, Dir{0, 1}, m)
-	// for i, line := range energized {
-	// 	fmt.Println(i, string(line))
-	// }
+	for i, line := range energized {
+		fmt.Println(i, string(line))
+	}
 
 	return energized
+}
+
+func part2(grid [][]byte) int {
+	energized := make([][]byte, len(grid))
+	for i := range energized {
+		energized[i] = make([]byte, len(grid[i]))
+		for j := range energized[i] {
+			energized[i][j] = '.'
+		}
+	}
+	m := make(map[PointDir]bool)
+	max := 0
+	for i := range grid {
+		energize(grid, energized, -1, i, Dir{1, 0}, m)
+		aux := count(energized)
+		for i := range energized {
+			for j := range energized[i] {
+				energized[i][j] = '.'
+			}
+		}
+		m = make(map[PointDir]bool)
+		if max < aux {
+			max = aux
+		}
+	}
+	for i := range grid[0] {
+		energize(grid, energized, i, -1, Dir{0, 1}, m)
+		aux := count(energized)
+		for i := range energized {
+			for j := range energized[i] {
+				energized[i][j] = '.'
+			}
+		}
+		m = make(map[PointDir]bool)
+		if max < aux {
+			max = aux
+		}
+	}
+	for i := range grid {
+		energize(grid, energized, len(grid), i, Dir{-1, 0}, m)
+		aux := count(energized)
+		for i := range energized {
+			for j := range energized[i] {
+				energized[i][j] = '.'
+			}
+		}
+		m = make(map[PointDir]bool)
+		if max < aux {
+			max = aux
+		}
+	}
+	for i := range grid[0] {
+		energize(grid, energized, i, len(grid[0]), Dir{0, -1}, m)
+		aux := count(energized)
+		for i := range energized {
+			for j := range energized[i] {
+				energized[i][j] = '.'
+			}
+		}
+		m = make(map[PointDir]bool)
+		if max < aux {
+			max = aux
+		}
+	}
+
+	return max
 }
 
 func energize(grid [][]byte, energized [][]byte, i, j int, dir Dir, m map[PointDir]bool) {
