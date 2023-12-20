@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -26,17 +27,28 @@ func main() {
 	_, _, _ = dir, val, color
 	coords := getCoord(dir, val)
 	outline := fillGrid(dir, val, color)
-	for i := 0; i < len(coords); i++ {
-		//fmt.Println(dir[i], val[i], color[i])
-		fmt.Println(coords[i])
-	}
 	// fmt.Println(dir[i], val[i], color[i])
-	// fmt.Println(coords[i])
+	fmt.Println(coords)
 	part1 := shoeLaceFormula(coords, outline)
 	fmt.Println("Part1", part1)
 	fmt.Println("Time in nanoseconds:", time.Since(s).Nanoseconds())
+	s2 := time.Now()
+	coords2, outline2 := getCoord2(color)
+	part2 := shoeLaceFormula(coords2, float64(outline2))
+	fmt.Println(outline2)
+	fmt.Println("Part2", part2)
+	fmt.Println("Time in nanoseconds:", time.Since(s2).Nanoseconds())
 }
 
+func hexDecode(hex string) int64 {
+
+	num, err := strconv.ParseInt(hex, 16, 64)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return num
+
+}
 func insertData(file []byte) ([]string, []float64, []string) {
 	var dir []string
 	var val []float64
@@ -114,6 +126,33 @@ func fillGrid(dir []string, val []float64, color []string) float64 {
 	return outline
 }
 
+func getCoord2(color []string) ([]Coord, int64) {
+	var coords []Coord
+	var outline int64 = 0
+	coord := Coord{0, 0}
+	for _, d := range color {
+		hexNum := d[2:7]
+		num := float64(hexDecode(hexNum))
+		dir := d[7:8]
+		fmt.Println(d, hexNum, dir, num)
+		switch dir {
+		case "0":
+			coord = Coord{coord.i, coord.j + num}
+			outline += int64(num)
+		case "2":
+			coord = Coord{coord.i, coord.j - num}
+			outline += int64(num)
+		case "1":
+			coord = Coord{coord.i + num, coord.j}
+			outline += int64(num)
+		case "3":
+			coord = Coord{coord.i - num, coord.j}
+			outline += int64(num)
+		}
+		coords = append(coords, coord)
+	}
+	return coords, outline
+}
 func getCoord(dir []string, val []float64) []Coord {
 	var coords []Coord
 	coord := Coord{0, 0}
@@ -133,14 +172,14 @@ func getCoord(dir []string, val []float64) []Coord {
 	return coords
 }
 
-func shoeLaceFormula(coords []Coord, outline float64) float64 {
+func shoeLaceFormula(coords []Coord, outline float64) int64 {
 	// https://en.wikipedia.org/wiki/Shoelace_formula
-	polygonArea := 0.0
+	var polygonArea int64 = 0
 	for i := 0; i < len(coords); i++ {
 		cur := coords[i]
 		next := coords[(i+1)%len(coords)]
 		//Al fin me sirvió algebra lineal, producto cruz....
-		polygonArea += cur.j*next.i - cur.i*next.j
+		polygonArea += int64(cur.j*next.i - cur.i*next.j)
 	}
 
 	if polygonArea < 0 {
@@ -148,5 +187,5 @@ func shoeLaceFormula(coords []Coord, outline float64) float64 {
 	}
 	polygonArea /= 2
 
-	return polygonArea + outline/2 + 1
+	return polygonArea + int64(outline/2) + 1
 }
